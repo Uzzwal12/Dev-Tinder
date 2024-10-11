@@ -1,0 +1,2 @@
+- Create a repo
+- Init the repo

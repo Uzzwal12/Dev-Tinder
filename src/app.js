@@ -11,13 +11,15 @@ app.post("/signup", async (req, res) => {
     lastName: req.body.lastName,
     email: req.body.email,
     password: req.body.password,
+    age: req.body.age,
+    gender: req.body.gender,
   });
 
   try {
     await user.save();
     res.send(user);
   } catch (error) {
-    res.status(400).send("Error saving user", error.message);
+    res.status(400).send(`Error saving user: ${error.message}`);
   }
 });
 
@@ -62,10 +64,12 @@ app.patch("/user/:id", async (req, res) => {
   const updatedData = req.body;
   const userId = req.params.id;
   try {
-    await User.findByIdAndUpdate(userId, updatedData);
+    await User.findByIdAndUpdate(userId, updatedData, { runValidators: true });
     res.status(200).send(`User updated`);
   } catch (error) {
-    res.status(400).send("Something went wrong while updating user");
+    res
+      .status(400)
+      .send(`Something went wrong while updating user: ${error.message}`);
   }
 });
 

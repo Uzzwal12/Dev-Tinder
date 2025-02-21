@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
 
 const userSchema = new mongoose.Schema(
   {
@@ -15,6 +16,11 @@ const userSchema = new mongoose.Schema(
       unique: true,
       lowercase: true,
       trim: true,
+      validate(value) {
+        if (!validator.isEmail(value)) {
+          throw new Error("Invalid Email:" + value);
+        }
+      },
     },
     password: {
       type: String,
@@ -36,13 +42,31 @@ const userSchema = new mongoose.Schema(
     },
     photoUrl: {
       type: String,
+      validate(value) {
+        if (!validator.isURL(value)) {
+          throw new Error("Invalid photo URL format");
+        }
+      },
     },
     about: {
       type: String,
       default: "Default about of user",
+      validate(value) {
+        if (value.length > 200) {
+          throw new Error("About section must be 200 characters or less");
+        }
+      },
     },
     skills: {
       type: [String],
+      validate(value) {
+        if (value.length >= 5) {
+          throw new Error("Cannot add more than 4 skills");
+        }
+        if (value.some((skill) => skill.length < 2)) {
+          throw new Error("Each skill must be at least 2 characters long");
+        }
+      },
     },
   },
   {

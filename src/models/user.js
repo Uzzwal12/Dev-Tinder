@@ -91,4 +91,15 @@ userSchema.methods.validatePassword = async function (password) {
   return isValidPassword;
 };
 
+userSchema.pre("save", async function (next) {
+  const user = this; // 'this' refers to the current user document
+
+  if (user.isModified("password")) {
+    user.password = await bcrypt.hash(user.password, 10);
+  }
+
+  // Proceed with the save operation
+  next();
+});
+
 module.exports = mongoose.model("User", userSchema);

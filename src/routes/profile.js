@@ -44,7 +44,7 @@ profileRouter.patch("/profile/password", userAuth, async (req, res) => {
         `Hello ${loggedInUser.firstName} your password has been updated successfully`
       );
   } catch (error) {
-    handleError(res, `Error saving user: ${error.message}`);
+    handleError(res, `Something went wrong: ${error.message}`);
   }
 });
 

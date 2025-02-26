@@ -22,7 +22,7 @@ requestRouter.post(
       if (!toUser) {
         return res.status(404).send("User not found");
       }
-      const existingConnectionRequest = await User.findOne({
+      const existingConnectionRequest = await ConnectionRequest.findOne({
         $or: [
           { fromUserId, toUserId },
           { fromUserId: toUserId, toUserId: fromUserId },
@@ -42,6 +42,35 @@ requestRouter.post(
       res.status(200).send("Connection request sent!");
     } catch (error) {
       handleError(res, `Error saving user: ${error.message}`);
+    }
+  }
+);
+
+requestRouter.post(
+  "/request/review/:status/:requestId",
+  userAuth,
+  async (req, res) => {
+    try {
+      const loggedInUser = req.user;
+      const { requestId, status } = req.params;
+      const ALLOWED_STATUS = ["accepted", "rejected"];
+      if (!ALLOWED_STATUS.includes(status)) {
+        return res.status("400").send("Invalid status");
+      }
+      const connectionRequest = await ConnectionRequest.findOne({
+        _id: requestId,
+        toUserId: loggedInUser._id,
+        status: "interested",
+      });
+      console.log(connectionRequest);
+      if (!connectionRequest) {
+        return res.status("404").send("Connection request not found");
+      }
+      connectionRequest.status = status;
+      await connectionRequest.save();
+      res.status(200).send(`Connection request ${status}!`);
+    } catch (error) {
+      handleError(res, `Something went wrong: ${error.message}`);
     }
   }
 );

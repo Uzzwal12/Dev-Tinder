@@ -84,22 +84,30 @@ userSchema.methods.getJwt = async function () {
   return token;
 };
 
-userSchema.methods.validatePassword = async function (password) {
+userSchema.methods.validatePassword = async function (passwordInputByUser) {
   const user = this;
-  const isValidPassword = await bcrypt.compare(password, user.password);
+  const passwordHash = user.password;
 
-  return isValidPassword;
-};
+  try {
+    const isPasswordValid = await bcrypt.compare(
+      passwordInputByUser,
+      passwordHash
+    );
 
-userSchema.pre("save", async function (next) {
-  const user = this; // 'this' refers to the current user document
-
-  if (user.isModified("password")) {
-    user.password = await bcrypt.hash(user.password, 10);
+    return isPasswordValid;
+  } catch (error) {
+    throw new Error("Password validation failed: " + error.message);
   }
+};
+// userSchema.pre("save", async function (next) {
+//   const user = this; // 'this' refers to the current user document
 
-  // Proceed with the save operation
-  next();
-});
+//   if (user.isModified("password") && user.password) {
+//     user.password = await bcrypt.hash(user.password, 10);
+//   }
+
+//   // Proceed with the save operation
+//   next();
+// });
 
 module.exports = mongoose.model("User", userSchema);

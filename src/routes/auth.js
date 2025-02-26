@@ -9,16 +9,15 @@ authRouter.post("/signup", async (req, res) => {
   const { firstName, lastName, email, password, age, gender } = req.body;
 
   try {
-    const hashPassword = await bcrypt.hash(password, 10);
+    const passwordHash = await bcrypt.hash(password, 10);
     const newUser = new User({
       firstName,
       lastName,
       email,
-      password: hashPassword,
+      password: passwordHash,
       age,
       gender,
     });
-
     await newUser.save();
     res.status(201).send(newUser);
   } catch (error) {

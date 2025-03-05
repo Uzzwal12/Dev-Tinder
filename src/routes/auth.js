@@ -27,7 +27,6 @@ authRouter.post("/signup", async (req, res) => {
 
 authRouter.post("/login", async (req, res) => {
   const { email, password } = req.body;
-
   try {
     const user = await User.findOne({ email });
     if (!user) return handleError(res, "Invalid email", 401);
@@ -37,7 +36,7 @@ authRouter.post("/login", async (req, res) => {
 
     const token = await user.getJwt();
     res.cookie("token", token);
-    res.status(200).send("Logged in successfully");
+    res.status(200).send(user);
   } catch (error) {
     handleError(res, `Login failed: ${error.message}`);
   }

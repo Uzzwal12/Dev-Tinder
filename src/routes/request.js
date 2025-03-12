@@ -4,7 +4,7 @@ const { handleError } = require("../utils/errorUtils");
 const ConnectionRequest = require("../models/connectionRequest");
 const User = require("../models/user");
 const requestRouter = express.Router();
-
+const sendEmail = require("../utils/sendEmail");
 // POST: Send connection request
 requestRouter.post(
   "/request/send/:status/:toUserId",
@@ -38,7 +38,9 @@ requestRouter.post(
         toUserId,
         status,
       });
+
       await connectionRequest.save();
+      await sendEmail.run(`A new connection request from ${req.user.email}`);
       res.status(200).send("Connection request sent!");
     } catch (error) {
       handleError(res, `Error saving user: ${error.message}`);

@@ -1,5 +1,4 @@
 const { SESClient } = require("@aws-sdk/client-ses");
-require("dotenv").config();
 // Set the AWS Region.
 const REGION = "ap-south-1";
 // Create SES service object.

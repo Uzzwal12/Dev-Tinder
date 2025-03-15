@@ -10,6 +10,7 @@ const userRouter = require("./routes/user");
 require("./utils/cronJob");
 
 const cors = require("cors");
+const paymentRouter = require("./routes/payment");
 
 const app = express();
 
@@ -26,6 +27,7 @@ app.use("/", authRouter);
 app.use("/", profileRouter);
 app.use("/", requestRouter);
 app.use("/", userRouter);
+app.use("/", paymentRouter);
 
 // Connect to the database and start the server
 connectDB()

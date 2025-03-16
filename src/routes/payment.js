@@ -64,11 +64,14 @@ paymentRouter.post("/payment/webhook", async (req, res) => {
     const payment = await Payment.findOne({
       orderId: paymentDetails.order_id,
     });
+    console.log("payment", payment);
     payment.status = paymentDetails.status;
     await payment.save();
     console.log("Payment saved");
 
     const user = await User.findOne({ _id: payment.userId });
+
+    console.log("user", user);
     user.isPremium = true;
     user.membershipType = payment.notes.membershipType;
     console.log("User saved");
